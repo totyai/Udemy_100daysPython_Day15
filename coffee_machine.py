@@ -8,6 +8,7 @@ NEEDS = {
     "espresso": {
         "water": 50,
         "coffee": 18,
+        "milk": 0,
         "cost": 1.50
     },
     "latte": {
@@ -23,6 +24,17 @@ NEEDS = {
         "cost": 3.00
     }
 }
+logo = """
+                                    
+   (         (     (                
+   )\\        )\\ )  )\\ )    (    (   
+ (((_)   (  (()/( (()/(   ))\\  ))\\  
+ )\\___   )\\  /(_)) /(_)) /((_)/((_) 
+((/ __| ((_)(_) _|(_) _|(_)) (_))   
+ | (__ / _ \\ |  _| |  _|/ -_)/ -_)  
+  \\___|\\___/ |_|   |_|  \\___|\\___|  
+                                    
+"""
 
 def report():
     """Returns a string with the resources available"""
@@ -43,24 +55,52 @@ def resource_check(coffee_type):
     return True
 
 def money_check(coffee_type):
-    print(f"Your coffee costs: ")
-    quarters = input("How much quarters? ")
-    dimes = input("How much dimes? ")
-    nickels = input("How much nickles? ")
-    pennies = input("How much pennies? ")
+    global resourses, NEEDS
+    """Asks the user for money for the coffee. Adds profit. Returns if transaction is successfull"""
+    print(f"Your coffee costs: ${NEEDS[coffee_type]['cost']}")
+    try:
+        quarters = int(input("How much quarters? "))
+        dimes = int(input("How much dimes? "))
+        nickels = int(input("How much nickles? "))
+        pennies = int(input("How much pennies? "))
+    except:
+        print("Wrong input. Try again.")
+    
+    sum = quarters * 0.25 + dimes * 0.1 + nickels * 0.05 + pennies * 0.01
+    print(f"Your Total: ${sum}.")
+    if sum == NEEDS[coffee_type]["cost"]:
+        resourses["money"] += sum
+        return True
+    elif sum > NEEDS[coffee_type]["cost"]:
+        change = sum - NEEDS[coffee_type]["cost"]
+        resourses["money"] += NEEDS[coffee_type]["cost"]
+        print(f"Here is ${change:.2f} in change.")
+        return True
+    else:
+        print("Sorry that's not enough money. Money refunded.")
+        return False
 
 def make_coffee(coffee_type):
+    """Deduces resources and calls in additional checks: money, resource need"""
+    global resourses, NEEDS
     if resource_check(coffee_type):
         if money_check(coffee_type):
-            pass
+            for key in resourses:
+                if key == "money":
+                    continue
+                else:
+                    resourses[key] -= NEEDS[coffee_type][key]
+            print(f"Here is your {coffee_type}.")
         else:
-            pass
+            return
     else:
         return
 
 def main():
+    global logo
     cont = True
     while cont:
+        print(logo)
         action = input("What would you like? (espresso/latte/cappuccino): ").lower()
         if action == "off":
             cont = False

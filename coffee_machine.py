@@ -67,11 +67,7 @@ def main():
             print("The machine turns off.")
         elif action == "report":
             print(report())
-        elif action == "espresso":
-            make_coffee(action)
-        elif action == "latte":
-            make_coffee(action)
-        elif action == "cappuccino":
+        elif action in NEEDS:
             make_coffee(action)
         else:
             print("Wrong input. Please try again.")
